@@ -8,7 +8,7 @@ parafilt is a Python package that provides a collection of parallel adaptive fil
 - Comprehensive documentation and examples for quick start and usage guidance.
 
 ## Installation
-To install Parafilt, you can use `pip`:
+To install ParaFilt, you can use `pip`:
 ```
 pip install parafilt
 ```
@@ -41,5 +41,8 @@ Contributions are welcome! If you find any issues or have suggestions for improv
 ## License
 This project is licensed under the MIT License. See the LICENSE file for more information.
 
+## Citation
+
 ## Contact
 For any inquiries or questions, please contact zoreasaf@gmail.com.
+

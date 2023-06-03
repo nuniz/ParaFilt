@@ -19,7 +19,7 @@ class TemplateFilter(BaseFilter):
 
     def iterate(self, d: torch.Tensor, x: torch.Tensor) -> (torch.Tensor, torch.Tensor):
         '''
-        Placeholder method for the filter iteration.
+        Placeholder for the filter iteration.
         :param d: Desired signal tensor.
             Shape: (batch_size, frame_length)
         :param x: Input tensor.
@@ -58,7 +58,7 @@ class LMS(BaseFilter):
         :return:
             (torch.Tensor, torch.Tensor): Tuple containing the estimated output and the error signal.
         '''
-        d_est = self.filt(x)  # Estimated output using the current filter weights
+        d_est = self.run_filter(x)  # Estimated output using the current filter weights
         e = d - d_est  # Compute the error signal
 
         # Update the filter weights using the LMS update rule
@@ -69,27 +69,58 @@ class LMS(BaseFilter):
 
 
 class RLS(BaseFilter):
-    def __init__(self, hop: int, framelen: int, filterlen: int = 1024, weights_delay: Optional[int] = None,
-                 weights_range: (float, float) = (-65535, 65535), forgetting_factor: float = 1,
-                 inverse_cc_init: float = 1.001):
+    def __init__(self, hop: int, framelen: int, filterlen: int = 20, weights_delay: Optional[int] = None,
+                 weights_range: (float, float) = (-65535, 65535), delta: float = 0.1, lmbd: float = 0.999):
+        '''
+        RLS filter class that extends the BaseFilter class.
+        :param hop: Hop size for frame processing.
+        :param framelen: Length of each frame.
+        :param filterlen: Length of the filter (default: 20).
+        :param weights_delay: Delay for the weights, If None, it is set to framelen/2 (default: None).
+        :param delta: Forgetting factor delta for the RLS algorithm (default: 0.1).
+        :param lmbd: Lambda parameter for the RLS algorithm (default: 0.999).
+        '''
         super().__init__(hop=hop, framelen=framelen, filterlen=filterlen, weights_delay=weights_delay,
                          weights_range=weights_range)
-        self.forgetting_factor = forgetting_factor
-        self.inverse_cc_init = inverse_cc_init
-        self.register_buffer('inverse_cc', inverse_cc_init * torch.eye(filterlen).unsqueeze(0))
+        self.delta = delta
+        self.lmbd = lmbd
+        self.register_buffer('inverse_correlation', self.delta * torch.eye(self.filterlen).unsqueeze(0).unsqueeze(0))
 
     def reset(self):
+        '''
+        Reset the RLS filter weights and inverse correlation matrix.
+        '''
         self.w *= 0
-        self.inverse_cc = self.inverse_cc_init * torch.eye(self.filterlen).unsqueeze(0).to(self.inverse_cc.device)
+        self.inverse_correlation = self.delta * torch.eye(self.filterlen).unsqueeze(0).unsqueeze(0).to(
+            self.inverse_correlation.device)
 
     def iterate(self, d: torch.Tensor, x: torch.Tensor) -> (torch.Tensor, torch.Tensor):
-        d_est = self.filt(x)
-        e = d - d_est
-        g = torch.einsum('ijk, lmk')
-        # torch.matmul(x, self.inverse_cc) / (
-        #         self.forgetting_factor + torch.matmul(torch.matmul(x, self.inverse_cc), x.permute(0, 2, 1)))
-        self.w += g * e
+        '''
+        Perform a single iteration of the RLS algorithm.
+        :param d: Desired signal tensor.
+        :param x: Input signal tensor.
+        :return:
+            (torch.Tensor, torch.Tensor): Tuple containing the estimated output and the error signal.
+        '''
+        d_est = self.run_filter(x)  # Estimated output using the current filter weights
+        e = d - d_est  # Compute the error signal
+
+        # Update the filter weights using the RLS update rule
+        g = torch.einsum('kli, klij -> kli', x, self.inverse_correlation)
+        g /= (self.lmbd + torch.einsum('ijk, ijk -> ij', g, x).unsqueeze(-1))
+        self.w += g * e.unsqueeze(-1)
 
         # Update inverse correlation matrix
-        self.inverse_cc = 1 / self.forgetting_factor * self.inverse_cc - e * g
+        self.inverse_correlation -= torch.einsum('ijk, ijp -> ijkp',
+                                                 torch.einsum('ijk, ijkl -> ijk', x, self.inverse_correlation), g)
+        self.inverse_correlation /= self.lmbd
         return d_est, e
+
+    def forward_settings(self, d: torch.Tensor, x: torch.Tensor):
+        '''
+        Set the forward settings for the RLS filter.
+        :param d: Desired signal tensor.
+        :param x: Input signal tensor.
+        '''
+        # Repeat inverse_correlation buffer along batch dimension
+        self.inverse_correlation = self.inverse_correlation.repeat(d.shape[0], d.shape[1], 1, 1)

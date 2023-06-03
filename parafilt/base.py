@@ -41,7 +41,7 @@ class BaseFilter(torch.nn.Module):
         '''
         self.w *= 0
 
-    def filt(self, x: torch.Tensor) -> torch.Tensor:
+    def run_filter(self, x: torch.Tensor) -> torch.Tensor:
         '''
         Apply the filter to the input tensor.
         :param x: Input tensor.
@@ -52,15 +52,26 @@ class BaseFilter(torch.nn.Module):
 
     def iterate(self, d: torch.Tensor, x: torch.Tensor) -> (torch.Tensor, torch.Tensor):
         '''
-        Iterate over the filter weights and inputs.
+        Placeholder for the filter iteration.
         :param d: Desired signal tensor.
+            Shape: (batch_size, frame_length)
         :param x: Input tensor.
+            Shape: (batch_size, frame_length, filter_length)
         :return:
             torch.Tensor: Estimated output tensor.
+                Shape: (batch_size, frame_length)
             torch.Tensor: Error tensor.
+                Shape: (batch_size, frame_length)
         '''
-        # Placeholder for filter iteration implementation
         raise NotImplementedError
+
+    def forward_settings(self, d: torch.Tensor, x: torch.Tensor):
+        '''
+        Placeholder for the settings during forward.
+        :param d: Desired signal tensor.
+        :param x: Input tensor.
+        '''
+        return
 
     def forward(self, d: torch.Tensor, x: torch.Tensor) -> (torch.Tensor, torch.Tensor):
         '''
@@ -71,7 +82,7 @@ class BaseFilter(torch.nn.Module):
             torch.Tensor: Estimated output tensor.
             torch.Tensor: Error tensor.
         '''
-        self.reset()  # Reset weights
+        self.reset()
 
         # Input validation
         assert d.ndim == 2, f'd ndim must be 2, but obtained {d.ndim}'
@@ -80,6 +91,9 @@ class BaseFilter(torch.nn.Module):
         # Unfold input tensors
         d = d.unfold(dimension=-1, size=self.framelen, step=self.hop)
         x = x.unfold(dimension=-1, size=self.framelen, step=self.hop).unsqueeze(0)
+
+        # Forward additional settings
+        self.forward_settings(d, x)
 
         # Initialize intermediate tensors
         d_est = torch.zeros_like(d)[..., self.weights_delay: -(self.filterlen - self.weights_delay)]
