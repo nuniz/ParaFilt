@@ -73,7 +73,9 @@ class BaseFilter(torch.nn.Module):
         '''
         Placeholder for the settings during forward.
         :param d: Desired signal tensor.
+            Shape: (batch_size, frame_length)
         :param x: Input tensor.
+            Shape: (batch_size, frame_length, filter_length)
         '''
         return
 
