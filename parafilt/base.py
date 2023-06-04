@@ -10,7 +10,7 @@ class BaseFilter(torch.nn.Module):
         :param hop: Hop size for frame processing.
         :param framelen: Length of each frame.
         :param filterlen: Length of the filter.
-        :param weights_delay: Delay for the weights, If None, it is set to framelen/2 (default: None).
+        :param weights_delay: Delay for the weights, If None, it is set to framelen-1 (default: None).
         :param weights_range: Range for the filter weights (default: (-65535, 65535)).
         '''
         super(BaseFilter, self).__init__()
@@ -32,15 +32,17 @@ class BaseFilter(torch.nn.Module):
         # Validate and set weights delay
         assert weights_delay is None or 0 <= weights_delay < filterlen, \
             f'delay must be between 0 to {filterlen} (filterlen), but obtained {weights_delay}'
-        self.weights_delay = filterlen // 2 if weights_delay is None else weights_delay
+        self.weights_delay = filterlen-1 if weights_delay is None else weights_delay
         self.weights_range = weights_range
 
+    @torch.no_grad()
     def reset(self):
         '''
         Reset the filter weights.
         '''
         self.w *= 0
 
+    @torch.no_grad()
     def run_filter(self, x: torch.Tensor) -> torch.Tensor:
         '''
         Apply the filter to the input tensor.
@@ -50,6 +52,7 @@ class BaseFilter(torch.nn.Module):
         '''
         return torch.einsum('ijk, pjk->ij', self.w, x)
 
+    @torch.no_grad()
     def iterate(self, d: torch.Tensor, x: torch.Tensor) -> (torch.Tensor, torch.Tensor):
         '''
         Placeholder for the filter iteration.
@@ -65,6 +68,7 @@ class BaseFilter(torch.nn.Module):
         '''
         raise NotImplementedError
 
+    @torch.no_grad()
     def forward_settings(self, d: torch.Tensor, x: torch.Tensor):
         '''
         Placeholder for the settings during forward.
@@ -73,6 +77,7 @@ class BaseFilter(torch.nn.Module):
         '''
         return
 
+    @torch.no_grad()
     def forward(self, d: torch.Tensor, x: torch.Tensor) -> (torch.Tensor, torch.Tensor):
         '''
         Apply the filter to the input signals.

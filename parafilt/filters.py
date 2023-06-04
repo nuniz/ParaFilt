@@ -17,6 +17,16 @@ class TemplateFilter(BaseFilter):
         super().__init__(hop=hop, framelen=framelen, filterlen=filterlen, weights_delay=weights_delay,
                          weights_range=weights_range)
 
+    @torch.no_grad()
+    def forward_settings(self, d: torch.Tensor, x: torch.Tensor):
+        '''
+        Placeholder for the settings during forward.
+        :param d: Desired signal tensor.
+        :param x: Input tensor.
+        '''
+        return
+
+    @torch.no_grad()
     def iterate(self, d: torch.Tensor, x: torch.Tensor) -> (torch.Tensor, torch.Tensor):
         '''
         Placeholder for the filter iteration.
@@ -50,6 +60,7 @@ class LMS(BaseFilter):
         self.learning_rate = learning_rate
         self.normalized = normalized
 
+    @torch.no_grad()
     def iterate(self, d: torch.Tensor, x: torch.Tensor) -> (torch.Tensor, torch.Tensor):
         '''
         Performs one iteration of the LMS algorithm.
@@ -86,6 +97,7 @@ class RLS(BaseFilter):
         self.lmbd = lmbd
         self.register_buffer('inverse_correlation', self.delta * torch.eye(self.filterlen).unsqueeze(0).unsqueeze(0))
 
+    @torch.no_grad()
     def reset(self):
         '''
         Reset the RLS filter weights and inverse correlation matrix.
@@ -94,6 +106,7 @@ class RLS(BaseFilter):
         self.inverse_correlation = self.delta * torch.eye(self.filterlen).unsqueeze(0).unsqueeze(0).to(
             self.inverse_correlation.device)
 
+    @torch.no_grad()
     def iterate(self, d: torch.Tensor, x: torch.Tensor) -> (torch.Tensor, torch.Tensor):
         '''
         Perform a single iteration of the RLS algorithm.
@@ -116,6 +129,7 @@ class RLS(BaseFilter):
         self.inverse_correlation /= self.lmbd
         return d_est, e
 
+    @torch.no_grad()
     def forward_settings(self, d: torch.Tensor, x: torch.Tensor):
         '''
         Set the forward settings for the RLS filter.
