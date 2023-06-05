@@ -41,8 +41,8 @@ Here's an example of how to use the package to create and apply the RLS filter:
 ```python
 import parafilt
 
-# Create an instance of the LMS filter
-rls_filter = parafilt.RLS(hop=1024, framelen=4096, filterlen=1024).cuda()
+# Create an instance of the RLS filter
+rls_filter = parafilt.RLS(hop=1024, framelen=4096, filterlen=30).cuda()
 
 # Perform parallel filter iteration
 d_est, e = rls_filter(desired_signal, input_signal)
