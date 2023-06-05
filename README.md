@@ -14,8 +14,19 @@ pip install parafilt
 ```
 
 ## Usage
-Here's an example of how to use the package to create and apply the LMS filter:
+Inputs:
 
+    desired_signal: (batch_size, samples) - Desired signal tensor.
+    input_signal: (samples) - Input tensor.
+
+Returns:
+
+    Tuple containing the estimated output and the error signal (d_est, e).
+	d_est: (batch_size, samples) - Estimated output tensor.
+    e: (batch_size, samples) - Error signal tensor.
+
+
+Here's an example of how to use the package to create and apply the LMS filter:
 ```python
 import parafilt
 
@@ -49,14 +60,14 @@ Here's an example of how to use the package to create your own filter:
 from parafilt import BaseFilter
 
 class TemplateFilter(BaseFilter):
-    def __init__(self, hop: int, framelen: int, filterlen: int = 1024, weights_delay: Optional[int] = None,
-                 weights_range: (float, float) = (-65535, 65535)):
+    def __init__(self, hop: int, framelen: int, filterlen: int = 1024, weights_delay: Optional[int] = None, 
+	weights_range: (float, float) = (-65535, 65535)):
         '''
         Template filter class that extends the BaseFilter class.
         :param hop: Hop size for frame processing.
         :param framelen: Length of each frame.
         :param filterlen: Length of the filter.
-        :param weights_delay: Delay for the weights, If None, it is set to framelen/2 (default: None).
+        :param weights_delay: Delay for the weights, If None, it is set to framelen-1 (default: None).
         :param weights_range: Range for the filter weights (default: (-65535, 65535)).
         '''
         super().__init__(hop=hop, framelen=framelen, filterlen=filterlen, weights_delay=weights_delay,
@@ -67,7 +78,9 @@ class TemplateFilter(BaseFilter):
         '''
         Placeholder for the settings during forward.
         :param d: Desired signal tensor.
+            Shape: (batch_size, frame_length)
         :param x: Input tensor.
+            Shape: (1, frame_length, filter_length)
         '''
         return
 
@@ -78,7 +91,7 @@ class TemplateFilter(BaseFilter):
         :param d: Desired signal tensor.
             Shape: (batch_size, frame_length)
         :param x: Input tensor.
-            Shape: (batch_size, frame_length, filter_length)
+            Shape: (1, frame_length, filter_length)
         :return:
             torch.Tensor: Estimated output tensor.
                 Shape: (batch_size, frame_length)
@@ -88,15 +101,18 @@ class TemplateFilter(BaseFilter):
         raise NotImplementedError
 ```
 
+## Future Work
+- Implementation of CUDA code for the parallel frameworks and filter algorithms to achieve even faster computations.
+- Addition of an option for zero-padding, enabling the output size to match the input size without discarding any samples during the frame decomposition and reconstruction process after performing the filter.
+
+## Citation
+TBD.
 
 ## Contributing
 Contributions are welcome! If you find any issues or have suggestions for improvement, please open an issue or submit a pull request on the GitHub repository.
 
 ## License
 This project is licensed under the MIT License. See the [LICENSE file](https://github.com/nuniz/ParaFilt/blob/main/LICENSE) for more information.
-
-## Citation
-TBD.
 
 ## Contact
 For any inquiries or questions, please contact zoreasaf@gmail.com.

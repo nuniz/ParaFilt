@@ -11,7 +11,7 @@ class TemplateFilter(BaseFilter):
         :param hop: Hop size for frame processing.
         :param framelen: Length of each frame.
         :param filterlen: Length of the filter.
-        :param weights_delay: Delay for the weights, If None, it is set to framelen - 1 (default: None).
+        :param weights_delay: Delay for the weights, If None, it is set to framelen-1 (default: None).
         :param weights_range: Range for the filter weights (default: (-65535, 65535)).
         '''
         super().__init__(hop=hop, framelen=framelen, filterlen=filterlen, weights_delay=weights_delay,
@@ -24,7 +24,7 @@ class TemplateFilter(BaseFilter):
         :param d: Desired signal tensor.
             Shape: (batch_size, frame_length)
         :param x: Input tensor.
-            Shape: (batch_size, frame_length, filter_length)
+            Shape: (1, frame_length, filter_length)
         '''
         return
 
@@ -35,7 +35,7 @@ class TemplateFilter(BaseFilter):
         :param d: Desired signal tensor.
             Shape: (batch_size, frame_length)
         :param x: Input tensor.
-            Shape: (batch_size, frame_length, filter_length)
+            Shape: (1, frame_length, filter_length)
         :return:
             torch.Tensor: Estimated output tensor.
                 Shape: (batch_size, frame_length)
@@ -53,7 +53,7 @@ class LMS(BaseFilter):
         :param hop: Hop size for frame processing.
         :param framelen: Length of each frame.
         :param filterlen: Length of the filter (default: 1024).
-        :param weights_delay: Delay for the weights, If None, it is set to framelen - 1 (default: None).
+        :param weights_delay: Delay for the weights, If None, it is set to framelen-1 (default: None).
         :param learning_rate: Learning rate for the LMS algorithm (default: 0.01).
         :param normalized: Flag indicating whether to normalize the input energy (default: True).
         '''
@@ -67,7 +67,9 @@ class LMS(BaseFilter):
         '''
         Performs one iteration of the LMS algorithm.
         :param d: Desired signal tensor.
+            Shape: (batch_size, frame_length)
         :param x: Input tensor.
+            Shape: (1, frame_length, filter_length)
         :return:
             (torch.Tensor, torch.Tensor): Tuple containing the estimated output and the error signal.
         '''
@@ -89,7 +91,7 @@ class RLS(BaseFilter):
         :param hop: Hop size for frame processing.
         :param framelen: Length of each frame.
         :param filterlen: Length of the filter (default: 20).
-        :param weights_delay: Delay for the weights, If None, it is set to framelen - 1 (default: None).
+        :param weights_delay: Delay for the weights, If None, it is set to framelen-1 (default: None).
         :param delta: Forgetting factor delta for the RLS algorithm (default: 0.1).
         :param lmbd: Lambda parameter for the RLS algorithm (default: 0.999).
         '''
@@ -113,7 +115,9 @@ class RLS(BaseFilter):
         '''
         Perform a single iteration of the RLS algorithm.
         :param d: Desired signal tensor.
-        :param x: Input signal tensor.
+            Shape: (batch_size, frame_length)
+        :param x: Input tensor.
+            Shape: (1, frame_length, filter_length)
         :return:
             (torch.Tensor, torch.Tensor): Tuple containing the estimated output and the error signal.
         '''
@@ -138,7 +142,7 @@ class RLS(BaseFilter):
         :param d: Desired signal tensor.
             Shape: (batch_size, frame_length)
         :param x: Input tensor.
-            Shape: (batch_size, frame_length, filter_length)
+            Shape: (1, frame_length, filter_length)
         '''
         # Repeat inverse_correlation buffer along batch dimension
         self.inverse_correlation = self.inverse_correlation.repeat(d.shape[0], d.shape[1], 1, 1)

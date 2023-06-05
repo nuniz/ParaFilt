@@ -47,6 +47,7 @@ class BaseFilter(torch.nn.Module):
         '''
         Apply the filter to the input tensor.
         :param x: Input tensor.
+            Shape: (1, frame_length, filter_length)
         :return:
             torch.Tensor: Filtered output tensor.
         '''
@@ -59,7 +60,7 @@ class BaseFilter(torch.nn.Module):
         :param d: Desired signal tensor.
             Shape: (batch_size, frame_length)
         :param x: Input tensor.
-            Shape: (batch_size, frame_length, filter_length)
+            Shape: (1, frame_length, filter_length)
         :return:
             torch.Tensor: Estimated output tensor.
                 Shape: (batch_size, frame_length)
@@ -75,7 +76,7 @@ class BaseFilter(torch.nn.Module):
         :param d: Desired signal tensor.
             Shape: (batch_size, frame_length)
         :param x: Input tensor.
-            Shape: (batch_size, frame_length, filter_length)
+            Shape: (1, frame_length, filter_length)
         '''
         return
 
@@ -84,7 +85,9 @@ class BaseFilter(torch.nn.Module):
         '''
         Apply the filter to the input signals.
         :param d: Desired signal tensor.
+            Shape: (batch_size, signal_samples)
         :param x: Input tensor.
+            Shape: (signal_samples)
         :return:
             torch.Tensor: Estimated output tensor.
             torch.Tensor: Error tensor.
