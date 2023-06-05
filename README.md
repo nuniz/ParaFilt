@@ -108,6 +108,7 @@ class TemplateFilter(BaseFilter):
 ## Citation
 [![DOI](https://zenodo.org/badge/648500046.svg)](https://zenodo.org/badge/latestdoi/648500046)
 
+```
 @software{asaf_zorea_2023_8004059,
   author       = {Asaf Zorea},
   title        = {nuniz/ParaFilt: zenodo upload},
@@ -118,6 +119,7 @@ class TemplateFilter(BaseFilter):
   doi          = {10.5281/zenodo.8004059},
   url          = {https://doi.org/10.5281/zenodo.8004059}
 }
+```
 
 ## Contributing
 Contributions are welcome! If you find any issues or have suggestions for improvement, please open an issue or submit a pull request on the GitHub repository.
