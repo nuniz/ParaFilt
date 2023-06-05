@@ -106,7 +106,18 @@ class TemplateFilter(BaseFilter):
 - Addition of an option for zero-padding, enabling the output size to match the input size without discarding any samples during the frame decomposition and reconstruction process after performing the filter.
 
 ## Citation
-TBD.
+[![DOI](https://zenodo.org/badge/648500046.svg)](https://zenodo.org/badge/latestdoi/648500046)
+
+@software{asaf_zorea_2023_8004059,
+  author       = {Asaf Zorea},
+  title        = {nuniz/ParaFilt: zenodo upload},
+  month        = jun,
+  year         = 2023,
+  publisher    = {Zenodo},
+  version      = {v0.1.2-beta},
+  doi          = {10.5281/zenodo.8004059},
+  url          = {https://doi.org/10.5281/zenodo.8004059}
+}
 
 ## Contributing
 Contributions are welcome! If you find any issues or have suggestions for improvement, please open an issue or submit a pull request on the GitHub repository.
