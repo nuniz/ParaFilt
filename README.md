@@ -101,17 +101,15 @@ class TemplateFilter(BaseFilter):
         raise NotImplementedError
 ```
 
-## Future Work
-- Implementation of CUDA code for the parallel frameworks and filter algorithms to achieve even faster computations.
-- Addition of an option for zero-padding, enabling the output size to match the input size without discarding any samples during the frame decomposition and reconstruction process after performing the filter.
-
 ## Citation
+If you use this software, please cite it as below.
+
 [![DOI](https://zenodo.org/badge/648500046.svg)](https://zenodo.org/badge/latestdoi/648500046)
 
 ```
 @software{asaf_zorea_2023_8004059,
   author       = {Asaf Zorea},
-  title        = {nuniz/ParaFilt: zenodo upload},
+  title        = {ParaFilt: Parallel Adaptive Filtering for Efficient Signal Processing},
   month        = jun,
   year         = 2023,
   publisher    = {Zenodo},
@@ -120,6 +118,10 @@ class TemplateFilter(BaseFilter):
   url          = {https://doi.org/10.5281/zenodo.8004059}
 }
 ```
+
+## Future Work
+- Implementation of CUDA code for the parallel frameworks and filter algorithms to achieve even faster computations.
+- Addition of an option for zero-padding, enabling the output size to match the input size without discarding any samples during the frame decomposition and reconstruction process after performing the filter.
 
 ## Contributing
 Contributions are welcome! If you find any issues or have suggestions for improvement, please open an issue or submit a pull request on the GitHub repository.
