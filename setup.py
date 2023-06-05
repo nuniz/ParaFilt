@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="parafilt",
-    version="0.1.1-beta",
+    version="0.1.2-beta",
     author="Asaf Zorea",
     author_email="zoreasaf@gmail.com",
     description="ParaFilt is a Python package that provides a collection of parallel adaptive filter "
