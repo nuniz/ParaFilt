@@ -1,5 +1,6 @@
 # ParaFilt
 ParaFilt is a Python package that provides a collection of parallel adaptive filter implementations for efficient signal processing applications. It leverages the power of parallel processing using PyTorch, enabling faster and scalable computations on multi-core CPUs and GPUs.
+![logo](https://github.com/nuniz/ParaFilt/ParaFilt.PNG)
 
 ## Features
 - Parallel algorithm framework that allows computing iterative algorithms in a parallel way.
@@ -52,6 +53,7 @@ For detailed usage example, please refer to this [notebook](https://github.com/n
 
 ## Parallel Algorithm Framework
 Parafilt provides a parallel algorithm framework that enables researchers to implement and execute iterative algorithms in a parallelized manner. This framework allows for efficient utilization of multi-core CPUs and GPUs, resulting in significant speedup for computationally intensive algorithms.
+![logo](https://github.com/nuniz/ParaFilt/ParaFilt.drawio.PNG)
 
 To leverage the parallel algorithm framework, researchers can extend the base classes provided by Parafilt and utilize the parallel computation capabilities provided by PyTorch.
 
@@ -131,4 +133,5 @@ This project is licensed under the MIT License. See the [LICENSE file](https://g
 
 ## Contact
 For any inquiries or questions, please contact zoreasaf@gmail.com.
+
 
